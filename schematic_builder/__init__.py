@@ -227,3 +227,4 @@ class file_loader_for_schematic(Plugin):
         z2 = z1 + 15
         
         return x1, z1, x2, z2
+entry = plugin_entry(file_loader_for_schematic)

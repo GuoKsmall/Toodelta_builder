@@ -1,0 +1,10 @@
+{
+    "author": "Mono",
+    "version": "0.0.1",
+    "description": "schemaitc导入器",
+    "limit_launcher": null,
+    "pre-plugins": {},
+    "plugin-type": "classic",
+    "plugin-id": "file_loader_for_schematic",
+    "enabled": false
+}

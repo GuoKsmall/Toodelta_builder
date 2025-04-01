@@ -6,13 +6,13 @@ import time
 from BDXConverter.Converter.Converter import BDX_2
 from BDXConverter import ReadBDXFile
 
-
+from magical_translater import autoTranslate
 
 
 class BDX_BDump(Plugin):
     name = "BDX-BDump导入器"
     author = "xingchen/SuperScript"
-    version = (0, 0, 6)
+    version = (0, 0, 5)
 
     def __init__(self, frame):
         super().__init__(frame)
@@ -33,10 +33,10 @@ class BDX_BDump(Plugin):
         self.get_y: float | None = None
         self.get_z: float | None = None
         self.frame.add_console_cmd_trigger(
-            ["bdump"], None, "导入bdx文件", self.dump_bdx_menu
+            ["bdump", "导入bdx"], None, "导入bdx文件", self.dump_bdx_menu
         )
         self.frame.add_console_cmd_trigger(
-            ["bdx-get"], None, "获取bdx文件导入坐标", self.get_bdx_pos_menu
+            ["bdx-get", "坐标bdx"], None, "获取bdx文件导入坐标", self.get_bdx_pos_menu
         )
 
     def dump_bdx_menu(self, _):
@@ -161,6 +161,8 @@ class BDumpOP:
                 case 26 | 36 | 27:
                     # SetCommandBlockData
                     now_len += 1
+                    if i.command.startswith("execute") or i.command.startswith("/execute"):
+                        i.command = autoTranslate(i.command)
                     pck = self.f.interact.make_packet_command_block_update(
                         (x, y, z),
                         i.command,

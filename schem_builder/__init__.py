@@ -28,7 +28,7 @@ class SCHEM导入器(Plugin):
         self.data = {}
         self.nbtlib = nbtlib
         
-    def on_active(self):
+    def on_inject(self):
         self.get_x: float | None = None
         self.get_y: float | None = None
         self.get_z: float | None = None

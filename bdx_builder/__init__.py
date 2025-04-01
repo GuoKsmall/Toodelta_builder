@@ -26,9 +26,9 @@ class BDX_BDump(Plugin):
         fmts.print_inf(
             "§b其第一作者为 Eternal Crystal (Happy2018New) (其他协作者请在项目内查看)"
         )
-        fmts.print_inf("§b新版ToolDelta插件格式支持 - by §aMono§f")
+        fmts.print_inf(fmts.print_gradient("新版ToolDelta插件格式支持 - by Mono",(0, 100, 255),(138, 43, 226)))
 
-    def on_active(self):
+    def on_inject(self):
         self.get_x: float | None = None
         self.get_y: float | None = None
         self.get_z: float | None = None

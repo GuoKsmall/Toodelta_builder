@@ -23,10 +23,13 @@ class SCHEM导入器(Plugin):
     version = (0, 0, 1)
 
     def __init__(self, frame: ToolDelta):
+        super().__init__(frame)
         self.frame = frame
         self.game_ctrl = frame.get_game_control()
         self.data = {}
         self.nbtlib = nbtlib
+        self.make_data_path()
+        self.ListenActive(self.on_inject)
         
     def on_inject(self):
         self.get_x: float | None = None
@@ -102,29 +105,43 @@ class SCHEM导入器(Plugin):
             data = json.loads(f.read())
         for i,j in Palette.items():
             unPalette[j.real]=i.split(":")[1].split("[")[0]
-        three_d_array = [[[0 for _ in range(width)] for _ in range(height)] for _ in range(length)]
-        index = 0
-        for z in range(length):
-            for x in range(width):
-                for y in range(height):
-                    three_d_array[z][y][x] = self.blocks[index]
-                    index += 1
+        x_a,x_b= self.check_multiple_of_16(width)
+        z_a,z_b= self.check_multiple_of_16(length)
+
+
+
+        if x_a>0:
+            if x_b!=0:
+                x_a=x_a+1
+        if z_a>0:
+            if z_b!=0:
+                z_a=z_a+1
+        z_a=z_a+1
+        x_a=x_a+1
+        zero_matrix = np.zeros((16*x_a,height,16*z_a), dtype=int)
+        for y in range(height):
+            for z in range(length):
+                for x in range(width):
+                    zero_matrix[x, y, z] = self.blocks[y * width * length + z*width + x]
         self.num = 0
-        # 按照 z → x → y 的顺序遍历三维数组
-        for z in range(length):  # 遍历z方向
-            for x in range(width):  # 遍历x方向
-                for y in range(height):  # 遍历y方向
-                    try:
-                        data[unPalette[three_d_array[z][y][x]]]
-                    except KeyError:
-                        data[unPalette[three_d_array[z][y][x]]] = "air"
-                    fmts.print_inf(f"正在导入 {name} - {x_+x},{y_+y},{z_+z} | 执行指令:setblock {x+int(x_)} {y+int(y_)} {z+int(z_)} {data[unPalette[three_d_array[z][y][x]]]}")
-                    if data[unPalette[three_d_array[z][y][x]]] != "air":
-                        self.game_ctrl.sendwocmd(
-                        f"setblock {x_+x} {y_+y} {z_+z} {data[unPalette[three_d_array[z][y][x]]]}"
-                        )
-                    self.num +=1
-                    time.sleep(1)
+        for z_i in range(z_a):
+            for x_i in range(x_a):
+                for z in range(16):
+                    z=z+16*z_i
+                    for x in range(16):
+                        x=x+16*x_i
+                        for y in range(height):
+                            block="air"
+                            try:
+                                block=data[unPalette[zero_matrix[z,y,x]]]
+                            except KeyError:
+                                block= "air"
+                            if block != "air":
+                                self.game_ctrl.sendwocmd(
+                                f"setblock {x_+x} {y_+y} {z_+z} {block}"
+                                )
+                            self.num +=1
+                            time.sleep(0.001)
     
 
     def check_multiple_of_16(self,n):

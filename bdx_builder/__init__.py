@@ -3,8 +3,8 @@ from tooldelta.constants import PacketIDS
 from tooldelta import utils
 import os
 import time
-from BDXConverter.Converter.Converter import BDX_2
-from BDXConverter import ReadBDXFile
+from .BDXConverter.Converter.Converter import BDX_2
+from .BDXConverter import ReadBDXFile
 
 from magical_translater import autoTranslate
 
@@ -17,6 +17,8 @@ class BDX_BDump(Plugin):
     def __init__(self, frame):
         super().__init__(frame)
         self.make_data_path()
+        self.ListenPreload(self.on_def)
+        self.ListenActive(self.on_inject)
 
     def on_def(self):
         self.interact = self.GetPluginAPI("前置-世界交互")
@@ -26,7 +28,10 @@ class BDX_BDump(Plugin):
         fmts.print_inf(
             "§b其第一作者为 Eternal Crystal (Happy2018New) (其他协作者请在项目内查看)"
         )
-        fmts.print_inf(fmts.print_gradient("新版ToolDelta插件格式支持 - by Mono",(0, 100, 255),(138, 43, 226)))
+        try:
+            fmts.print_inf(fmts.print_gradient("新版ToolDelta插件格式支持 - by Mono",(0, 100, 255),(138, 43, 226)))
+        except:
+            fmts.print_inf("§b使用新版ToolDelta插件格式 - by §aMono§r")
 
     def on_inject(self):
         self.get_x: float | None = None

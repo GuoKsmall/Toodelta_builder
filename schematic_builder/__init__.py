@@ -23,18 +23,20 @@ class SCHEMATIC导入器(Plugin):
     version = (0, 0, 1)
 
     def __init__(self, frame: ToolDelta):
+        super().__init__(frame)
         self.frame = frame
         self.game_ctrl = frame.get_game_control()
         self.data = {}
-
         self.nbtlib = nbtlib
+        self.make_data_path()
+        self.ListenActive(self.on_inject)
         
     def on_inject(self):
         self.get_x: float | None = None
         self.get_y: float | None = None
         self.get_z: float | None = None
         self.frame.add_console_cmd_trigger(
-            ["schematic"], None, "import schematic file", self.dump_schem_menu
+            ["load_schematic"], None, "import schematic file", self.dump_schem_menu
         )
         self.frame.add_console_cmd_trigger(
             ["schematic-get"], None, "input the pos of the startponit of schematic", self.get_schem_pos_menu
